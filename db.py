@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker
 
-DB_URL = "postgresql+psycopg2://postgres:mysecretpassword@localhost:5432/postgres"
+DATABASE_URL = "postgresql://postgres:password@localhost:5432/postgres"
 
-engine = create_engine(DB_URL, echo=False)
-SessionLocal = sessionmaker(bind=engine)
-Base = declarative_base()
+engine = create_engine(DATABASE_URL)
+Session = sessionmaker(bind=engine)
+session = Session()
