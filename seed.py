@@ -1,12 +1,11 @@
 from faker import Faker
 import random
-from db import SessionLocal
+from db import session
 from models import Group, Student, Teacher, Subject, Grade
 
 fake = Faker()
-session = SessionLocal()
 
-groups = [Group(name=f"Group-{i}") for i in range(1, 4)]
+groups = [Group(name=f"Group {i}") for i in range(1, 4)]
 session.add_all(groups)
 
 teachers = [Teacher(name=fake.name()) for _ in range(5)]
@@ -18,7 +17,7 @@ subjects = []
 for _ in range(7):
     subject = Subject(
         name=fake.word(),
-        teacher=random.choice(teachers)
+        teacher_id=random.choice(teachers).id
     )
     subjects.append(subject)
 
@@ -29,7 +28,7 @@ students = []
 for _ in range(40):
     student = Student(
         name=fake.name(),
-        group=random.choice(groups)
+        group_id=random.choice(groups).id
     )
     students.append(student)
 
@@ -40,11 +39,11 @@ for student in students:
     for subject in subjects:
         for _ in range(random.randint(5, 20)):
             grade = Grade(
+                student_id=student.id,
+                subject_id=subject.id,
                 grade=random.randint(60, 100),
-                student=student,
-                subject=subject
+                date_received=fake.date_time_this_year()
             )
             session.add(grade)
 
 session.commit()
-session.close()
