@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 SQLAlchemy
 psycopg2-binary
 alembic
 faker
+=======
+sqlalchemy
+psycopg2-binary
+faker
+alembic
+>>>>>>> 29c00f345e2b584ca4c8ef0f68fe35b6a658dd1f
