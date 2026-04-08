@@ -3,7 +3,7 @@ import argparse
 from database import SessionLocal
 from models import Student, Teacher, Group, Subject
 
-session = SessionLocal()
+with SessionLocal() as session:
 
 
 def create(model, name):
