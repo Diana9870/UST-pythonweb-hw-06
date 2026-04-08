@@ -7,10 +7,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
-# Додаємо шлях до проєкту
 sys.path.append(os.getcwd())
 
-# Імпорт бази і моделей
 from database import Base
 import models
 
@@ -28,7 +26,6 @@ def run_migrations_offline():
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
-        dialect_opts={"paramstyle": "named"},
     )
 
     with context.begin_transaction():
