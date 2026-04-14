@@ -45,7 +45,7 @@ def select_3(session: Session, subject_id: int):
         .join(Student, Student.group_id == Group.id)
         .join(Grade, Grade.student_id == Student.id)
         .filter(Grade.subject_id == subject_id)
-        .group_by(Group.id)
+        .group_by(Group.id, Group.name)
         .all()
     )
 
