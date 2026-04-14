@@ -1,79 +1,61 @@
 import argparse
-
 from database import SessionLocal
 from models import Student, Teacher, Group, Subject
-
-with SessionLocal() as session:
-
-
-def create(model, name):
-    obj = model(name=name)
-    session.add(obj)
-    session.commit()
-    print(f"Created: {obj}")
-
-
-def list_all(model):
-    objects = session.query(model).all()
-    for obj in objects:
-        print(obj.id, obj.name)
-
-
-def update(model, obj_id, name):
-    obj = session.query(model).filter_by(id=obj_id).first()
-    if obj:
-        obj.name = name
-        session.commit()
-        print("Updated")
-    else:
-        print("Not found")
-
-
-def remove(model, obj_id):
-    obj = session.query(model).filter_by(id=obj_id).first()
-    if obj:
-        session.delete(obj)
-        session.commit()
-        print("Deleted")
-    else:
-        print("Not found")
-
 
 MODELS = {
     "Student": Student,
     "Teacher": Teacher,
     "Group": Group,
-    "Subject": Subject,
+    "Subject": Subject
 }
 
 
+def create(session, model, name):
+    obj = model(name=name)
+    session.add(obj)
+    session.commit()
+
+
+def list_all(session, model):
+    results = session.query(model).all()
+    for r in results:
+        print(r.id, r.name)
+
+
+def update(session, model, obj_id, name):
+    obj = session.query(model).filter_by(id=obj_id).first()
+    if obj:
+        obj.name = name
+        session.commit()
+
+
+def remove(session, model, obj_id):
+    obj = session.query(model).filter_by(id=obj_id).first()
+    if obj:
+        session.delete(obj)
+        session.commit()
+
+
 def main():
-    parser = argparse.ArgumentParser(description="CLI for DB")
-
-    parser.add_argument("-a", "--action", required=True,
-                        choices=["create", "list", "update", "remove"])
-
-    parser.add_argument("-m", "--model", required=True,
-                        choices=MODELS.keys())
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-a", "--action", required=True)
+    parser.add_argument("-m", "--model", required=True)
     parser.add_argument("--id", type=int)
     parser.add_argument("-n", "--name")
 
     args = parser.parse_args()
 
-    model = MODELS[args.model]
+    model = MODELS.get(args.model)
 
-    if args.action == "create":
-        create(model, args.name)
-
-    elif args.action == "list":
-        list_all(model)
-
-    elif args.action == "update":
-        update(model, args.id, args.name)
-
-    elif args.action == "remove":
-        remove(model, args.id)
+    with SessionLocal() as session:
+        if args.action == "create":
+            create(session, model, args.name)
+        elif args.action == "list":
+            list_all(session, model)
+        elif args.action == "update":
+            update(session, model, args.id, args.name)
+        elif args.action == "remove":
+            remove(session, model, args.id)
 
 
 if __name__ == "__main__":

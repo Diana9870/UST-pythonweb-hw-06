@@ -1,41 +1,42 @@
 from faker import Faker
 import random
-
 from database import SessionLocal
-from models import Student, Group, Teacher, Subject, Grade
+from models import Group, Teacher, Student, Subject, Grade
 
 fake = Faker()
-session = SessionLocal()
 
-groups = [Group(name=f"Group-{i}") for i in range(1, 4)]
-session.add_all(groups)
 
-teachers = [Teacher(name=fake.name()) for _ in range(5)]
-session.add_all(teachers)
+def seed():
+    with SessionLocal() as session:
+        groups = [Group(name=f"Group {i}") for i in range(1, 4)]
+        session.add_all(groups)
 
-subjects = [
-    Subject(name=fake.word(), teacher=random.choice(teachers))
-    for _ in range(7)
-]
-session.add_all(subjects)
+        teachers = [Teacher(name=fake.name()) for _ in range(5)]
+        session.add_all(teachers)
 
-students = [
-    Student(name=fake.name(), group=random.choice(groups))
-    for _ in range(40)
-]
-session.add_all(students)
+        subjects = []
+        for _ in range(7):
+            subject = Subject(name=fake.word(), teacher=random.choice(teachers))
+            subjects.append(subject)
+        session.add_all(subjects)
 
-session.commit()
+        students = []
+        for _ in range(40):
+            student = Student(name=fake.name(), group=random.choice(groups))
+            students.append(student)
+        session.add_all(students)
 
-for student in students:
-    for subject in subjects:
-        for _ in range(random.randint(5, 10)):
-            grade = Grade(
-                student=student,
-                subject=subject,
-                grade=random.randint(60, 100),
-            )
-            session.add(grade)
+        for student in students:
+            for _ in range(random.randint(10, 20)):
+                grade = Grade(
+                    student=student,
+                    subject=random.choice(subjects),
+                    grade=random.randint(60, 100)
+                )
+                session.add(grade)
 
-session.commit()
-session.close()
+        session.commit()
+
+
+if __name__ == "__main__":
+    seed()
